@@ -1,0 +1,715 @@
+#!/usr/bin/env bash
+
+# - Show user their drives installed on the computer
+showUserTheirDrives () {
+    DRIVES=$( df -h )
+    echo "$DRIVES"
+    #sudo touch testDoc
+    #sudo echo "$DRIVES" >> testDoc
+  }
+# - Step 1:  
+askUserForNetwork () {
+    echo "--------------------------------------------------------------------------"
+    echo "Step 1: We will start with choosing a Bitcoin Network - Mainnet or Testnet" " "
+    echo "--------------------------------------------------------------------------"
+      select USERGIVENNETWORKCHOICE in Mainnet Testnet Exit
+      do
+          case $USERGIVENNETWORKCHOICE in
+              Mainnet )
+              while true; do    
+                read -r -p "Confirm you want to use the Bitcoin "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENNETWORKCHOICEANSWER
+                    case $USERGIVENNETWORKCHOICEANSWER in
+                        [yY][eE][sS]|[yY] )
+                          echo
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForNetwork
+                          break    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          break
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;       
+              Testnet )
+              while true; do    
+                read -r -p "Confirm you want to use the Bitcoin "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENNETWORKCHOICEANSWER
+                    case $USERGIVENNETWORKCHOICEANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForNetwork
+                          break    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;; 
+              Exit )
+                echo ""
+                echo "------------------------------------------------"
+                echo "------------------------------------------------"
+                echo "------------------------------------------------"
+                echo "Exiting Bitcoin Core and Lightning LND Installer"
+                echo "------------------------------------------------"
+                echo "------------------------------------------------"
+                echo "------------------------------------------------"
+                exit
+                sleep 1.5
+                break
+              ;;
+              * ) 
+                echo ""
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+                echo "Invalid choice, please choose from the list above"
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+              ;;    
+      esac
+      done
+      }
+# - Step 2: 
+askUserForBitcoinDataDir () {
+    if [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] 
+     then
+        echo "" 
+        echo "---------------------------------------------------------------"
+        echo "Step 2: Locate your mounted drive path in the last column below" 
+        echo "---------------------------------------------------------------"
+        echo "This is where Bitcoin "$USERGIVENNETWORKCHOICE"'s data directory will be stored. You will need 300 GB minimum"
+        echo "-------------------------------------------------------------------------------------------"
+        echo ""
+        showUserTheirDrives
+        echo ""
+        read -r -p "Type the path to your "$USERGIVENNETWORKCHOICE" Bitcoin data directory. Type default to skip this step `echo $'\n '` Format example -> /media/user/Bitcoin_Testnet `echo $'\n> '`" USERGIVENBITCOINDATADIR
+        echo "--------------------------------------------------------------------"
+            while true; do      
+            read -r -p "You have set "$USERGIVENBITCOINDATADIR" as your Bitcoin "$USERGIVENNETWORKCHOICE" data directory, is this correct, Yes or No: `echo $'\n> '`" USERGIVENBITCOINDATADIRANSWER
+                case $USERGIVENBITCOINDATADIRANSWER in
+                    [yY][eE][sS]|[yY] )
+                        sleep .15
+                        break
+                    ;;
+                    nN][oO]|[nN] ) 
+                        askUserForBitcoinDataDir
+                        sleep .15
+                        break
+                    ;;
+                    * ) 
+                        echo ""
+                        echo "--------------------------------------"
+                        echo "--------------------------------------"
+                        echo "Invalid choice, please enter Yes or No"
+                        echo "--------------------------------------"
+                        echo "--------------------------------------"
+                    ;;
+                esac
+                done
+    else
+        echo "" 
+        echo "---------------------------------------------------------------"
+        echo "Step 2: Locate your mounted drive path in the last column below" 
+        echo "---------------------------------------------------------------"
+        echo "This is where Bitcoin "$USERGIVENNETWORKCHOICE"'s data directory will be stored. You will need 50 GB minimum"
+        echo "-------------------------------------------------------------------------------------------"
+        echo ""
+        showUserTheirDrives
+        echo ""
+        read -r -p "Type the path to your "$USERGIVENNETWORKCHOICE" Bitcoin data directory. Type default to skip this step `echo $'\n '` Format example -> /media/user/Bitcoin_Testnet `echo $'\n> '`" USERGIVENBITCOINDATADIR
+        echo "--------------------------------------------------------------------" 
+            while true; do    
+            read -r -p "You have set "$USERGIVENBITCOINDATADIR" as your Bitcoin "$USERGIVENNETWORKCHOICE" data directory, is this correct, Yes or No: `echo $'\n> '`" USERGIVENBITCOINDATADIRANSWER
+                case $USERGIVENBITCOINDATADIRANSWER in
+                    [yY][eE][sS]|[yY] )
+                        sleep .15
+                        break
+                    ;;
+                    nN][oO]|[nN] ) 
+                        askUserForBitcoinDataDir
+                        sleep .15
+                        break
+                    ;;
+                    * ) 
+                        echo ""
+                        echo "--------------------------------------"
+                        echo "--------------------------------------"
+                        echo "Invalid choice, please enter Yes or No"
+                        echo "--------------------------------------"
+                        echo "--------------------------------------"
+                    ;;
+                esac
+                done
+    fi 
+  }
+# - Step 3:
+askUserForBitcoinProgramToInstallOrRun () {
+    echo "-------------------------------------------------------------------------------------------"
+    echo "Step 3: Choose the program you wish to install and / or run on the Bitcoin's "$USERGIVENNETWORKCHOICE" network:"
+    echo "-------------------------------------------------------------------------------------------"
+      select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Run Bitcoind" "Run Bitcoin-QT" "Run LND" "Install Bitcoin Core & LND" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
+      do
+          case $USERGIVENPROGRAMRUNINSTALL in
+            "Install Bitcoin Core" )
+              while true; do 
+                echo ""
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's $USERGIVENNETWORKCHOICE network:  Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                        # - Step 4: 
+                            bitcoinInstallFunction
+                            break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun
+                          break    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;           
+            "Install LND" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun  
+                          break  
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;           
+            "Run Bitcoind" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForBitcoinProgramInstallRun   
+                          break 
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;           
+            "Run Bitcoin-QT" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForBitcoinProgramInstallRun  
+                          break  
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;           
+            "Run LND" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun
+                          break    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;           
+            "Install Bitcoin Core & LND" )
+              while true; do
+                echo ""
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun  
+                          break  
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;
+            "Run Bitcoind & LND" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun
+                          break    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;
+            "Install & Run Bitcoind & LND" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForBitcoinProgramInstallRun 
+                          break   
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;
+            "Change Bitcoin Network" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL from Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          echo "Resting Bitcoin Network Selection"
+                          askUserForNetwork
+                          askUserForBitcoinProgramInstallRun
+                          break
+                        ;;
+                        [nN][oO]|[nN] ) 
+                          echo ""
+                          askUserForBitcoinProgramInstallRun
+                          break
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;
+            "Quit The Bitcoin Core Installer" )
+              while true; do
+                echo ""  
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL : Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
+                        [yY][eE][sS]|[yY] )
+                          echo "------------------------------------------------"
+                          echo "------------------------------------------------"
+                          echo "------------------------------------------------"
+                          echo "Exiting Bitcoin Core and Lightning LND Installer"
+                          echo "------------------------------------------------"
+                          echo "------------------------------------------------"
+                          echo "------------------------------------------------"
+                          exit
+                          sleep 1.5
+                          break
+                        ;;
+                        [nN][oO]|[nN] )
+                          echo "" 
+                          askUserForBitcoinProgramInstallRun    
+                        ;;
+                        * ) 
+                          echo ""
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo "Invalid choice, please enter Yes or No"
+                          echo "--------------------------------------"
+                          echo "--------------------------------------"
+                          echo ""
+                        ;;    
+                    esac
+                    done
+                    break
+                    ;;                                                                                           
+            "*" ) 
+                echo ""
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+                echo "Invalid choice, please choose from the list above"
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+              ;;    
+      esac
+      done
+      }
+# - Step 4:
+startRunningBitcoinCoreOptions () {
+    echo "----------------------------------------------------------"
+    echo "Step 4: Please choose what Bitcoin wallet you wish to run"
+    echo "----------------------------------------------------------"
+
+    select USERGIVENBITCOINPROGRAM in bitcoind bitcoin-qt Exit
+    do    
+        case $USERGIVENBITCOINPROGRAM in
+            bitcoind )
+                if [ "$USERGIVENPROGRAMRUNINSTALL" == 'I''n''s''t''a''l''l' ]
+                then 
+                    echo "--------------------------------------------------------------------------------------------------------------------"
+                    read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
+                    echo "--------------------------------------------------------------------------------------------------------------------"
+                fi               
+                gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoind
+                echo "------------------------------------------------------------------------------------------------------------------"   
+                echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
+                echo "------------------------------------------------------------------------------------------------------------------"
+                echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+                break
+                ;;
+            bitcoin-qt )
+                if [ "$USERGIVENINSTALLRUNBITCOIN" == 'R''u''n' ]
+                then 
+                    echo "--------------------------------------------------------------------------------------------------------------------"
+                    read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
+                    echo "--------------------------------------------------------------------------------------------------------------------"
+                fi              
+                echo "--------------------------------------------------------------------------------------------------------------------"
+                read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
+                echo "--------------------------------------------------------------------------------------------------------------------"
+                gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt  
+                echo "------------------------------------------------------------------------------------------------------------------"   
+                echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoin-qt IBD database for fastest download"
+                echo "------------------------------------------------------------------------------------------------------------------"
+                echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+                break
+                ;;
+            Exit )
+                exit
+                ;;
+            * ) 
+                echo "--------------"
+                echo "Invalid choice, enter either bitcoind or bitcoin-qt"
+                startRunningBitcoinCoreOptions
+                ;;
+        esac
+        done
+    }
+
+# - Step 4.1                       
+installBitcoinCoreDependencies () {
+  echo "---------------------------------------------------------------"
+  echo "Step 4.1: Download and install the dependencies for Bitcoin Core"
+  echo "---------------------------------------------------------------"
+  sudo apt-get update && upgrade
+  sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config bsdmainutils python3
+  sudo apt-get install -y libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev
+  sudo apt-get install -y libboost-chrono-dev libboost-test-dev libboost-thread-dev
+  sudo apt-get install -y libboost-all-dev
+  sudo apt-get install -y libminiupnpc-dev
+  sudo apt-get install -y libzmq3-dev
+  sudo apt-get install -y libqrencode-dev
+  sudo apt-get install -y software-properties-common
+  sudo add-apt-repository -y ppa:bitcoin/bitcoin
+  sudo apt install -y curl
+  sudo apt-get update
+  sleep .15
+  }
+
+# - Step 4.2: Download and install Bitcoin-qt dependencies and required packages for Qt development, the GUI version of core
+installBitcoinCoreQtDependencies () {
+  echo "---------------------------------------------------------------"
+  echo "Step 4.2: Download and install the dependencies for Bitcoin QT"
+  echo "---------------------------------------------------------------"
+  sudo apt-get install -y libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libprotobuf-dev protobuf-compiler
+  sleep .15
+  } 
+
+# - Steo 4.3: Download and install Git
+installGit () {
+  echo "---------------------------------------------------------------"
+  echo "Step 4.3: Download and install Git"
+  echo "---------------------------------------------------------------"
+  sudo apt-get -y install git
+  sleep .15
+  }
+
+# - Step 4.4: Create a folder in the users $HOME directory and clone the Bitcoin repository from GitHub
+makeBitcoinDir () {
+  echo "---------------------------------------------------------------------------------------------------"
+  echo "Step 4.4: Create a folder in the home directory, and clone the Bitcoin repository from GitHub to it"
+  echo "---------------------------------------------------------------------------------------------------"
+      cd $HOME
+      mkdir -p bitcoin-source && cd bitcoin-source  
+      sleep .5
+      sudo git clone https://github.com/bitcoin/bitcoin.git
+      sleep .15
+  }
+  
+# - Step 4.5: Extract, build, verify hash, and THEN install the Berkeley Database
+verifyAndInstallBerkley () {
+  echo "----------------------------------------------"
+  echo "Step 4.5: Download and install Berkley Database"
+  echo "----------------------------------------------"
+  wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz -P ~/bitcoin-source
+  BERKLEYCHECKSUMOK=$(echo '12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef  db-4.8.30.NC.tar.gz' | sha256sum -c)
+      if [ "$BERKLEYCHECKSUMOK" == "db-4.8.30.NC.tar.gz: OK" ]
+      then
+          tar -xvf db-4.8.30.NC.tar.gz
+          cd db-4.8.30.NC/build_unix
+          mkdir -p build
+          BDB_PREFIX=$(pwd)/build
+          ../dist/configure --disable-shared --enable-cxx --with-pic --prefix=$BDB_PREFIX
+          sudo make install
+      else
+          echo "The install had to exit due to an incorrect hash, this was done for the integrity of your computer"
+      fi
+  sleep .15
+  } 
+# - Step 4.7: Installs Bitcoin Core and Bitcoin CLI
+installBitcoinCore () {
+  echo "------------------------------"
+  echo "Step 4.7: Install Bitcoin Core"
+  echo "------------------------------"
+  cd $HOME
+  cd bitcoin-source
+  cd bitcoin
+  sudo git checkout tags/v0.17.1  #(this is for version v0.17.1)
+  sudo ./autogen.sh
+  sudo ./configure CPPFLAGS="-I${BDB_PREFIX}/include/ -O2" LDFLAGS="-L${BDB_PREFIX}/lib/" --with-gui
+  sudo make && make install
+  echo "-------------------------------------------" 
+  echo "Bitcoin core has been installed succesfully"
+  echo "-------------------------------------------"
+  sleep .25
+  }  
+# - Steps 4.8 & 4.9: Write the .bitcoin/bitcoin.conf config file in the HOME directory && write the bitcoin.conf file in the corresponding data directory choosen by the user
+writeBitcoinConfFileDependingOnUserGivenDataDir () {
+  # .bitcoin bitcoin.conf write
+  echo "-------------------------------------------------------------------------"
+  echo "Step 4.8: Write the config file for Bitcoin in the hidden .bitcoin folder"
+  echo "-------------------------------------------------------------------------"
+  cd $HOME
+  mkdir ~/.bitcoin
+  cd ~/.bitcoin
+  touch bitcoinscriptdata.txt
+  sed -i '1,350d' ~/.bitcoin/bitcoinscriptdata.txt
+  echo "$USERGIVENINSTALLRUNBITCOIN" >> ~/.bitcoin/bitcoinscriptdata.txt
+  echo "$USERGIVENNETWORKCHOICE" >> ~/.bitcoin/bitcoinscriptdata.txt
+  echo "$USERGIVENBITCOINDATADIR" >> ~/.bitcoin/bitcoinscriptdata.txt
+  touch debug.log
+  touch bitcoin.conf
+  sed -i '1,350d' ~/.bitcoin/bitcoin.conf
+  echo "debug=net" >> ~/.bitcoin/bitcoin.conf
+  echo "rpcuser=rpcuser" >> ~/.bitcoin/bitcoin.conf
+  echo "rpcpassword=password" >> ~/.bitcoin/bitcoin.conf
+  echo "txindex=1" >> ~/.bitcoin/bitcoin.conf
+  echo "log-level=debug" >> ~/.bitcoin/bitcoin.conf
+  #echo "datadir="$USERGIVENBITCOINDATADIR"" >> ~/.bitcoin/bitcoin.conf
+  echo "server=1" >> ~/.bitcoin/bitcoin.conf
+  #echo "daemon=1" >> ~/.bitcoin/bitcoin.conf
+  echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> ~/.bitcoin/bitcoin.conf
+  echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> ~/.bitcoin/bitcoin.conf
+  # - Check to see if user has a defined data directory or is using default
+      if  [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
+      then 
+          echo "mainnet=1" >> ~/.bitcoin/bitcoin.conf
+      elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
+      then
+          echo "testnet=1" >> ~/.bitcoin/bitcoin.conf
+      elif [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
+      then
+          # Mainnet bitcoin.conf write8
+          echo "--------------------------------------------------"
+          echo "Step 4.9: Write the config file for Bitcoin mainnet"
+          echo "--------------------------------------------------"
+          touch "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          sed -i '1,35d' "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "debug=net" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "rpcuser=rpcuser" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "rpcpassword=password" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "datadir="$USERGIVENBITCOINDATADIR"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "mainnet=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "mainnet=1" >> ~/.bitcoin/bitcoin.conf
+          echo "txindex=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "log-level=debug" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          #echo "daemon=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "datadir="$USERGIVENBITCOINDATADIR"" >> ~/.bitcoin/bitcoin.conf
+          echo "server=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "Confirming Bitcoin.conf file setup for Mainnet"
+          echo "STOPINg MAINNET"
+      elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
+      then
+          # Testnet bitcoin.conf write
+          echo "--------------------------------------------------"
+          echo "Step 4.9: Write the config file for Bitcoin testnet"
+          echo "--------------------------------------------------"
+          touch "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          sed -i '1,35d' "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "debug=net" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "rpcuser=rpcuser" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "rpcpassword=password" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "testnet=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "testnet=1" >> ~/.bitcoin/bitcoin.conf
+          echo "datadir=$USERGIVENBITCOINDATADIR" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "txindex=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "log-level=debug" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          #echo "daemon=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "datadir="$USERGIVENBITCOINDATADIR"" >> ~/.bitcoin/bitcoin.conf
+          echo "server=1" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
+          echo "Confirming Bitcoin.conf file setup for Testnet"
+      else 
+      echo "" 
+      fi 
+  } 
+  
+
+                          
+
+
+
+
+
+
+
+
+
+
+
+
+# - Install Bitcoin Core
+bitcoinInstallFunction() {
+  installBitcoinCoreDependencies 
+  installBitcoinCoreQtDependencies
+  installGit 
+  makeBitcoinDir 
+  #createFolderAndCloneBitcoinRepo
+  verifyAndInstallBerkley 
+  installBitcoinCore 
+  writeBitcoinConfFileDependingOnUserGivenDataDir
+  askUserForBitcoinProgramToInstallOrRun
+
+  }
+echo "-----------------------------------------------------"
+echo "Starting Bitcoin Core automated installer Alpha 0.2.1"
+echo "-----------------------------------------------------"
+echo "******** To exit installer type control + Z *********"
+echo ""
+sudo sleep 1   
+askUserForNetwork
+askUserForBitcoinDataDir
+askUserForBitcoinProgramToInstallOrRun
