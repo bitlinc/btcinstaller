@@ -230,6 +230,7 @@ askUserForBitcoinProgramToInstallOrRun () {
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
+                          startRunningBitcoinCoreOptions
                           break
                         ;;
                         [nN][oO]|[nN] ) 
