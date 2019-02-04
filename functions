@@ -712,7 +712,7 @@ bitcoinInstallFunction() {
 
   }
 echo "-----------------------------------------------------"
-echo "Starting Bitcoin Core automated installer Alpha 0.2.6"
+echo "Starting Bitcoin Core automated installer Alpha 0.2.7"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + Z *********"
 echo ""
