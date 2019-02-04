@@ -456,9 +456,9 @@ askUserForBitcoinProgramToInstallOrRun () {
       }
 # - Step 4:
 startRunningBitcoinCoreOptions () {
-    echo "----------------------------------------------------------"
+    echo "---------------------------------------------------------"
     echo "Step 4: Please choose what Bitcoin wallet you wish to run"
-    echo "----------------------------------------------------------"
+    echo "---------------------------------------------------------"
 
     select USERGIVENBITCOINPROGRAM in bitcoind bitcoin-qt Exit
     do    
@@ -521,6 +521,7 @@ installBitcoinCoreDependencies () {
   sudo apt-get install -y libqrencode-dev
   sudo apt-get install -y software-properties-common
   sudo add-apt-repository -y ppa:bitcoin/bitcoin
+  sudo apt-get install -y libzmq3-dev
   sudo apt install -y curl
   sudo apt-get update
   sleep .15
@@ -621,13 +622,16 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
   #echo "daemon=1" >> ~/.bitcoin/bitcoin.conf
   echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> ~/.bitcoin/bitcoin.conf
   echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> ~/.bitcoin/bitcoin.conf
+  ech "export PATH=$PATH:~/bitcoin-source/bitcoin/scr" >> ~/.bashrc
   # - Check to see if user has a defined data directory or is using default
       if  [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
       then 
           echo "mainnet=1" >> ~/.bitcoin/bitcoin.conf
+          source ~/.bashrc
       elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
       then
           echo "testnet=1" >> ~/.bitcoin/bitcoin.conf
+          source ~/.bashrc
       elif [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
       then
           # Mainnet bitcoin.conf write8
@@ -650,7 +654,7 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
           echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
           echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
           echo "Confirming Bitcoin.conf file setup for Mainnet"
-          echo "STOPINg MAINNET"
+          source ~/.bashrc
       elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
       then
           # Testnet bitcoin.conf write
@@ -673,6 +677,7 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
           echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
           echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
           echo "Confirming Bitcoin.conf file setup for Testnet"
+          source ~/.bashrc
       else 
       echo "" 
       fi 
@@ -698,7 +703,7 @@ bitcoinInstallFunction() {
   installBitcoinCoreQtDependencies
   installGit 
   makeBitcoinDir 
-  #createFolderAndCloneBitcoinRepo
+  createFolderAndCloneBitcoinRepo
   verifyAndInstallBerkley 
   installBitcoinCore 
   writeBitcoinConfFileDependingOnUserGivenDataDir
@@ -715,4 +720,6 @@ askUserForNetwork
 askUserForBitcoinDataDir
 askUserForBitcoinProgramToInstallOrRun
 startRunningBitcoinCoreOptions
+startRunningBitcoinCoreOptions
+
 
