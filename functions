@@ -587,7 +587,8 @@ installBitcoinCore () {
   sudo git checkout tags/v0.17.1  #(this is for version v0.17.1)
   sudo ./autogen.sh
   sudo ./configure CPPFLAGS="-I${BDB_PREFIX}/include/ -O2" LDFLAGS="-L${BDB_PREFIX}/lib/" --with-gui
-  sudo make && make install
+  sudo make
+  sudo make install
   echo "-------------------------------------------" 
   echo "Bitcoin core has been installed succesfully"
   echo "-------------------------------------------"
@@ -713,3 +714,5 @@ sudo sleep 1
 askUserForNetwork
 askUserForBitcoinDataDir
 askUserForBitcoinProgramToInstallOrRun
+startRunningBitcoinCoreOptions
+
