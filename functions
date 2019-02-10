@@ -165,7 +165,7 @@ askUserForBitcoinDataDir () {
 # - Step 3:
 askUserForBitcoinProgramToInstallOrRun () {
     echo "-------------------------------------------------------------------------------------------"
-    echo "Step 3: Choose the program you wish to install and / or run on the Bitcoin's "$USERGIVENNETWORKCHOICE" network:"
+    echo "Step 3: Choose the program you wish to install or run on the Bitcoin "$USERGIVENNETWORKCHOICE" network:"
     echo "-------------------------------------------------------------------------------------------"
       select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Start Bitcoin" "Run LND" "Install Bitcoin Core & LND" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
       do
@@ -431,43 +431,46 @@ askUserForBitcoinProgramToInstallOrRun () {
       }
 # - Step 4:
 startRunningBitcoinCoreOptions () {
-    echo "----------------------------------------------------------------------------------------"
-    echo "Step 4: Please choose bitcoin-qt for the GUI version and bitcoind command line interface"
-    echo "----------------------------------------------------------------------------------------"
+    echo "-----------------------------------------------------------------------------------------------"
+    echo "Step 4: Please choose bitcoin-qt for the GUI version or bitcoind for the command line interface"
+    echo "-----------------------------------------------------------------------------------------------"
 
     select USERGIVENBITCOINPROGRAM in bitcoind bitcoin-qt Exit
     do    
         case $USERGIVENBITCOINPROGRAM in
             bitcoind )
-                if [ "$USERGIVENPROGRAMRUNINSTALL" == 'I''n''s''t''a''l''l' ]
+                if [ "$USERGIVENPROGRAMRUNINSTALL" == "Install Bitcoin" ]
                 then 
+                    # - Running bitcoind with increase database cache for optimal speed during the IBD
                     echo "--------------------------------------------------------------------------------------------------------------------"
                     read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
+                    echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
                     echo "--------------------------------------------------------------------------------------------------------------------"
-                fi               
-                gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoind
-                echo "------------------------------------------------------------------------------------------------------------------"   
-                echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
-                echo "------------------------------------------------------------------------------------------------------------------"
-                echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
-                break
+                else 
+                    # - Running bitcoind because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL              
+                    gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoind
+                    echo "------------------------------------------------------------------------------------------------------------------"   
+                    echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    break
+                fi
                 ;;
             bitcoin-qt )
-                if [ "$USERGIVENINSTALLRUNBITCOIN" == 'R''u''n' ]
+                if [ "$USERGIVENINSTALLRUNBITCOIN" == "Start Bitcoin" ]
                 then 
+                    # - Running bitcoin-qt with increase database cache for optimal speed during the IBD
                     echo "--------------------------------------------------------------------------------------------------------------------"
-                    read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
+                    read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM
+                    echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf 
                     echo "--------------------------------------------------------------------------------------------------------------------"
-                fi              
-                echo "--------------------------------------------------------------------------------------------------------------------"
-                read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
-                echo "--------------------------------------------------------------------------------------------------------------------"
-                gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt  
-                echo "------------------------------------------------------------------------------------------------------------------"   
-                echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoin-qt IBD database for fastest download"
-                echo "------------------------------------------------------------------------------------------------------------------"
-                echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
-                break
+                else             
+                    # - Running bitcoin-qt because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL
+                    gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt  
+                    echo "------------------------------------------------------------------------------------------------------------------"   
+                    echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoin-qt IBD database for fastest download"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    break
+                fi
                 ;;
             Exit )
                 exit
@@ -597,17 +600,19 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
   #echo "daemon=1" >> ~/.bitcoin/bitcoin.conf
   echo "zmqpubrawblock=tcp://127.0.0.1:28332" >> ~/.bitcoin/bitcoin.conf
   echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> ~/.bitcoin/bitcoin.conf
-  ech "export PATH=$PATH:~/bitcoin-source/bitcoin/scr" >> ~/.bashrc
+  echo "export PATH=$PATH:~/bitcoin-source/bitcoin/scr" >> ~/.bashrc      
+  }
+  writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir () {
   # - Check to see if user has a defined data directory or is using default
-      if  [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
+      if  [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ] && [ "$USERGIVENBITCOINDATADIR" == "default" ]
       then 
           echo "mainnet=1" >> ~/.bitcoin/bitcoin.conf
           source ~/.bashrc
-      elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" == 'd''e''f''a''u''l''t' ]
+      elif [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ] && [ "$USERGIVENBITCOINDATADIR" == "default" ]
       then
           echo "testnet=1" >> ~/.bitcoin/bitcoin.conf
           source ~/.bashrc
-      elif [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
+      elif [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ] && [ "$USERGIVENBITCOINDATADIR" != "default" ]
       then
           # Mainnet bitcoin.conf write8
           echo "--------------------------------------------------"
@@ -630,7 +635,7 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
           echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
           echo "Confirming Bitcoin.conf file setup for Mainnet"
           source ~/.bashrc
-      elif [ "$USERGIVENNETWORKCHOICE" == 'T''e''s''t''n''e''t' ] && [ "$USERGIVENBITCOINDATADIR" != 'd''e''f''a''u''l''t' ]
+      elif [ "$USERGIVENNETWORKCHOICE" == "Testnet" ] && [ "$USERGIVENBITCOINDATADIR" != "default" ]
       then
           # Testnet bitcoin.conf write
           echo "--------------------------------------------------"
@@ -669,6 +674,7 @@ bitcoinInstallFunction() {
   verifyAndInstallBerkley 
   installBitcoinCore 
   writeBitcoinConfFileDependingOnUserGivenDataDir
+  writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
   askUserForBitcoinProgramToInstallOrRun
 
   }
