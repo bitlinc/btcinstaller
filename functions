@@ -167,7 +167,7 @@ askUserForBitcoinProgramToInstallOrRun () {
     echo "-------------------------------------------------------------------------------------------"
     echo "Step 3: Choose the program you wish to install and / or run on the Bitcoin's "$USERGIVENNETWORKCHOICE" network:"
     echo "-------------------------------------------------------------------------------------------"
-      select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Run Bitcoind" "Run Bitcoin-QT" "Run LND" "Install Bitcoin Core & LND" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
+      select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Start Bitcoin" "Run LND" "Install Bitcoin Core & LND" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
       do
           case $USERGIVENPROGRAMRUNINSTALL in
             "Install Bitcoin Core" )
@@ -224,10 +224,10 @@ askUserForBitcoinProgramToInstallOrRun () {
                     done
                     break
                     ;;           
-            "Run Bitcoind" )
+            "Start Bitcoin" )
               while true; do
                 echo ""  
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
                           startRunningBitcoinCoreOptions
@@ -250,33 +250,7 @@ askUserForBitcoinProgramToInstallOrRun () {
                     esac
                     done
                     break
-                    ;;           
-            "Run Bitcoin-QT" )
-              while true; do
-                echo ""  
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
-                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
-                        [yY][eE][sS]|[yY] )
-                          break
-                        ;;
-                        [nN][oO]|[nN] ) 
-                          echo ""
-                          askUserForBitcoinProgramInstallRun  
-                          break  
-                        ;;
-                        * ) 
-                          echo ""
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo "Invalid choice, please enter Yes or No"
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo ""
-                        ;;    
-                    esac
-                    done
-                    break
-                    ;;           
+                    ;;                     
             "Run LND" )
               while true; do
                 echo ""  
@@ -457,9 +431,9 @@ askUserForBitcoinProgramToInstallOrRun () {
       }
 # - Step 4:
 startRunningBitcoinCoreOptions () {
-    echo "---------------------------------------------------------"
-    echo "Step 4: Please choose what Bitcoin wallet you wish to run"
-    echo "---------------------------------------------------------"
+    echo "----------------------------------------------------------------------------------------"
+    echo "Step 4: Please choose bitcoin-qt for the GUI version and bitcoind command line interface"
+    echo "----------------------------------------------------------------------------------------"
 
     select USERGIVENBITCOINPROGRAM in bitcoind bitcoin-qt Exit
     do    
@@ -554,7 +528,7 @@ makeBitcoinDir () {
       cd $HOME
       mkdir -p bitcoin-source && cd bitcoin-source  
       sleep .5
-      sudo git clone https://github.com/bitcoin/bitcoin.git
+      git clone https://github.com/bitcoin/bitcoin.git
       sleep .15
   }
   
@@ -685,19 +659,6 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
   } 
   
 
-                          
-
-
-
-
-
-
-
-
-
-
-
-
 # - Install Bitcoin Core
 bitcoinInstallFunction() {
   installBitcoinCoreDependencies 
@@ -712,7 +673,7 @@ bitcoinInstallFunction() {
 
   }
 echo "-----------------------------------------------------"
-echo "Starting Bitcoin Core automated installer Alpha 0.2.9"
+echo "Starting Bitcoin Core automated installer Alpha 0.3.0"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + Z *********"
 echo ""
@@ -720,7 +681,10 @@ sudo sleep 1
 askUserForNetwork
 askUserForBitcoinDataDir
 askUserForBitcoinProgramToInstallOrRun
-startRunningBitcoinCoreOptions
-startRunningBitcoinCoreOptions
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+
+
 
 
