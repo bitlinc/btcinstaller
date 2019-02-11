@@ -257,12 +257,14 @@ askUserForBitcoinProgramToInstallOrRun () {
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
+                          echo ""
+                          notYetWorking
                           break
                         ;;
                         [nN][oO]|[nN] )
-                          echo "" 
-                          askUserForBitcoinProgramInstallRun
-                          break    
+                          echo ""
+                          notYetWorking
+                          break   
                         ;;
                         * ) 
                           echo ""
@@ -283,11 +285,13 @@ askUserForBitcoinProgramToInstallOrRun () {
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
+                          echo ""
+                          notYetWorking
                           break
                         ;;
                         [nN][oO]|[nN] )
-                          echo "" 
-                          askUserForBitcoinProgramInstallRun  
+                          echo ""
+                          notYetWorking
                           break  
                         ;;
                         * ) 
@@ -309,11 +313,13 @@ askUserForBitcoinProgramToInstallOrRun () {
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
+                          echo ""
+                          notYetWorking
                           break
                         ;;
                         [nN][oO]|[nN] )
                           echo "" 
-                          askUserForBitcoinProgramInstallRun
+                          notYetWorking
                           break    
                         ;;
                         * ) 
@@ -335,11 +341,13 @@ askUserForBitcoinProgramToInstallOrRun () {
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
+                          echo ""
+                          notYetWorking
                           break
                         ;;
                         [nN][oO]|[nN] ) 
                           echo ""
-                          askUserForBitcoinProgramInstallRun 
+                          notYetWorking 
                           break   
                         ;;
                         * ) 
@@ -363,7 +371,8 @@ askUserForBitcoinProgramToInstallOrRun () {
                         [yY][eE][sS]|[yY] )
                           echo "Resting Bitcoin Network Selection"
                           askUserForNetwork
-                          askUserForBitcoinProgramInstallRun
+                          askUserForBitcoinDataDir
+                          askUserForBitcoinProgramToInstallOrRun
                           break
                         ;;
                         [nN][oO]|[nN] ) 
@@ -447,7 +456,9 @@ startRunningBitcoinCoreOptions () {
                     echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
                     echo "--------------------------------------------------------------------------------------------------------------------"
                 else 
-                    # - Running bitcoind because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL              
+                    # - Running bitcoind because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL
+                    writeBitcoinConfFileDependingOnUserGivenDataDir        
+                    writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
                     gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoind
                     echo "------------------------------------------------------------------------------------------------------------------"   
                     echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
@@ -465,6 +476,8 @@ startRunningBitcoinCoreOptions () {
                     echo "--------------------------------------------------------------------------------------------------------------------"
                 else             
                     # - Running bitcoin-qt because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL
+                    writeBitcoinConfFileDependingOnUserGivenDataDir
+                    writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
                     gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt  
                     echo "------------------------------------------------------------------------------------------------------------------"   
                     echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoin-qt IBD database for fastest download"
@@ -676,20 +689,39 @@ bitcoinInstallFunction() {
   writeBitcoinConfFileDependingOnUserGivenDataDir
   writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
   askUserForBitcoinProgramToInstallOrRun
-
   }
+
+notYetWorking () {
+echo ""  
+echo "This part hasn't been added to the script yet, reseting your choice"
+echo ""
+askUserForBitcoinProgramToInstallOrRun
+}
 echo "-----------------------------------------------------"
 echo "Starting Bitcoin Core automated installer Alpha 0.3.0"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + Z *********"
 echo ""
-sudo sleep 1   
+sudo sleep .75   
 askUserForNetwork
 askUserForBitcoinDataDir
 askUserForBitcoinProgramToInstallOrRun
 askUserForBitcoinProgramToInstallOrRun
 askUserForBitcoinProgramToInstallOrRun
 askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+askUserForBitcoinProgramToInstallOrRun
+
 
 
 
