@@ -698,11 +698,11 @@ echo ""
 askUserForBitcoinProgramToInstallOrRun
 }
 echo "-----------------------------------------------------"
-echo "Starting Bitcoin Core automated installer Alpha 0.3.0"
+echo "Starting Bitcoin Core automated installer Beta 0.1.0"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + Z *********"
 echo ""
-sudo sleep .75   
+sudo sleep 1.5   
 askUserForNetwork
 askUserForBitcoinDataDir
 askUserForBitcoinProgramToInstallOrRun
