@@ -9,9 +9,9 @@ showUserTheirDrives () {
   }
 # - Step 1:  
 askUserForNetwork () {
-    echo "--------------------------------------------------------------------------"
-    echo "Step 1: We will start with choosing a Bitcoin Network - Mainnet or Testnet" " "
-    echo "--------------------------------------------------------------------------"
+    echo "------------------------------------------------------------------------------------"
+    echo "Bitcoin - Step 1: We will start with choosing a Bitcoin Network - Mainnet or Testnet"
+    echo "------------------------------------------------------------------------------------"
       select USERGIVENNETWORKCHOICE in Mainnet Testnet Exit
       do
           case $USERGIVENNETWORKCHOICE in
@@ -91,12 +91,12 @@ askUserForNetwork () {
       }
 # - Step 2: 
 askUserForBitcoinDataDir () {
-    if [ "$USERGIVENNETWORKCHOICE" == 'M''a''i''n''n''e''t' ] 
+    if [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ] 
      then
         echo "" 
-        echo "---------------------------------------------------------------"
-        echo "Step 2: Locate your mounted drive path in the last column below" 
-        echo "---------------------------------------------------------------"
+        echo "-------------------------------------------------------------------------"
+        echo "Bitcoin - Step 2: Locate your mounted drive path in the last column below" 
+        echo "-------------------------------------------------------------------------"
         echo "This is where Bitcoin "$USERGIVENNETWORKCHOICE"'s data directory will be stored. You will need 300 GB minimum"
         echo "-------------------------------------------------------------------------------------------"
         echo ""
@@ -167,7 +167,7 @@ askUserForBitcoinProgramToInstallOrRun () {
     echo "-------------------------------------------------------------------------------------------"
     echo "Step 3: Choose the program you wish to install or run on the Bitcoin "$USERGIVENNETWORKCHOICE" network:"
     echo "-------------------------------------------------------------------------------------------"
-      select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Start Bitcoin" "Run LND" "Install Bitcoin Core & LND" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
+      select USERGIVENPROGRAMRUNINSTALL in "Install Bitcoin Core"  "Install LND" "Run Bitcoin Core" "Run LND" "LND CLI Commands" "Run Bitcoind & LND" "Install & Run Bitcoind & LND" "Change Bitcoin Network" "Quit The Bitcoin Core Installer"
       do
           case $USERGIVENPROGRAMRUNINSTALL in
             "Install Bitcoin Core" )
@@ -177,57 +177,36 @@ askUserForBitcoinProgramToInstallOrRun () {
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
                         # - Step 4: 
+                            echo "" 
                             bitcoinInstallFunction
                             break
                         ;;
                         [nN][oO]|[nN] )
-                          echo "" 
-                          askUserForBitcoinProgramInstallRun
-                          break    
+                            echo "" 
+                            askUserForBitcoinProgramToInstallOrRun
+                            break    
                         ;;
                         * ) 
-                          echo ""
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo "Invalid choice, please enter Yes or No"
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo ""
-                        ;;    
+                            echo ""
+                            echo "--------------------------------------"
+                            echo "--------------------------------------"
+                            echo "Invalid choice, please enter Yes or No"
+                            echo "--------------------------------------"
+                            echo "--------------------------------------"
+                            echo ""
+                            ;;    
                     esac
                     done
                     break
                     ;;           
             "Install LND" )
+              installLnd
+              askUserForBitcoinProgramToInstallOrRun
+              ;;
+            "Run Bitcoin Core" )
               while true; do
                 echo ""  
                 read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
-                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
-                        [yY][eE][sS]|[yY] )
-                          break
-                        ;;
-                        [nN][oO]|[nN] )
-                          echo "" 
-                          askUserForBitcoinProgramInstallRun  
-                          break  
-                        ;;
-                        * ) 
-                          echo ""
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo "Invalid choice, please enter Yes or No"
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo ""
-                        ;;    
-                    esac
-                    done
-                    break
-                    ;;           
-            "Start Bitcoin" )
-              while true; do
-                echo ""  
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
                           startRunningBitcoinCoreOptions
@@ -235,7 +214,7 @@ askUserForBitcoinProgramToInstallOrRun () {
                         ;;
                         [nN][oO]|[nN] ) 
                           echo ""
-                          askUserForBitcoinProgramInstallRun   
+                          askUserForBitcoinProgramToInstallOrRun   
                           break 
                         ;;
                         * ) 
@@ -252,46 +231,21 @@ askUserForBitcoinProgramToInstallOrRun () {
                     break
                     ;;                     
             "Run LND" )
-              while true; do
-                echo ""  
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
-                    case $USERGIVENPROGRAMRUNINSTALLANSWER in
-                        [yY][eE][sS]|[yY] )
-                          echo ""
-                          notYetWorking
-                          break
-                        ;;
-                        [nN][oO]|[nN] )
-                          echo ""
-                          notYetWorking
-                          break   
-                        ;;
-                        * ) 
-                          echo ""
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo "Invalid choice, please enter Yes or No"
-                          echo "--------------------------------------"
-                          echo "--------------------------------------"
-                          echo ""
-                        ;;    
-                    esac
-                    done
-                    break
-                    ;;           
-            "Install Bitcoin Core & LND" )
+              runLnd
+              askUserForBitcoinProgramToInstallOrRun
+              ;;           
+            "LND CLI Commands" )
               while true; do
                 echo ""
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                read -r -p "Confirm you want to open $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
-                          echo ""
-                          notYetWorking
+                          lndCommandlineInterfaceMainMenu
                           break
                         ;;
                         [nN][oO]|[nN] )
                           echo ""
-                          notYetWorking
+                          askUserForBitcoinProgramToInstallOrRun
                           break  
                         ;;
                         * ) 
@@ -314,13 +268,13 @@ askUserForBitcoinProgramToInstallOrRun () {
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
                           echo ""
-                          notYetWorking
-                          break
+                          startRunningBitcoinCoreOptions
+                          runLnd
+                          askUserForBitcoinProgramToInstallOrRun                          
                         ;;
                         [nN][oO]|[nN] )
                           echo "" 
-                          notYetWorking
-                          break    
+                          askUserForBitcoinProgramToInstallOrRun                          
                         ;;
                         * ) 
                           echo ""
@@ -338,17 +292,19 @@ askUserForBitcoinProgramToInstallOrRun () {
             "Install & Run Bitcoind & LND" )
               while true; do
                 echo ""  
-                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on the "$USERGIVENNETWORKCHOICE": Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+                read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
                     case $USERGIVENPROGRAMRUNINSTALLANSWER in
                         [yY][eE][sS]|[yY] )
                           echo ""
-                          notYetWorking
-                          break
+                          bitcoinInstallFunction
+                          installLnd
+                          startRunningBitcoinCoreOptions
+                          runLnd
+                          askUserForBitcoinProgramToInstallOrRun                        
                         ;;
                         [nN][oO]|[nN] ) 
-                          echo ""
-                          notYetWorking 
-                          break   
+                          echo "" 
+                          askUserForBitcoinProgramToInstallOrRun  
                         ;;
                         * ) 
                           echo ""
@@ -377,7 +333,7 @@ askUserForBitcoinProgramToInstallOrRun () {
                         ;;
                         [nN][oO]|[nN] ) 
                           echo ""
-                          askUserForBitcoinProgramInstallRun
+                          askUserForBitcoinProgramToInstallOrRun
                           break
                         ;;
                         * ) 
@@ -412,7 +368,7 @@ askUserForBitcoinProgramToInstallOrRun () {
                         ;;
                         [nN][oO]|[nN] )
                           echo "" 
-                          askUserForBitcoinProgramInstallRun    
+                          askUserForBitcoinProgramToInstallOrRun    
                         ;;
                         * ) 
                           echo ""
@@ -454,7 +410,14 @@ startRunningBitcoinCoreOptions () {
                     echo "--------------------------------------------------------------------------------------------------------------------"
                     read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM 
                     echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf
-                    echo "--------------------------------------------------------------------------------------------------------------------"
+                    writeBitcoinConfFileDependingOnUserGivenDataDir        
+                    writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
+                    gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoind
+                    echo "------------------------------------------------------------------------------------------------------------------"   
+                    echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    askUserForBitcoinProgramToInstallOrRun
                 else 
                     # - Running bitcoind because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL
                     writeBitcoinConfFileDependingOnUserGivenDataDir        
@@ -463,26 +426,33 @@ startRunningBitcoinCoreOptions () {
                     echo "------------------------------------------------------------------------------------------------------------------"   
                     echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
                     echo "------------------------------------------------------------------------------------------------------------------"
-                    break
+                    askUserForBitcoinProgramToInstallOrRun
                 fi
                 ;;
             bitcoin-qt )
-                if [ "$USERGIVENINSTALLRUNBITCOIN" == "Start Bitcoin" ]
+                if [ "$USERGIVENINSTALLRUNBITCOIN" == "Install Bitcoin" ]
                 then 
                     # - Running bitcoin-qt with increase database cache for optimal speed during the IBD
                     echo "--------------------------------------------------------------------------------------------------------------------"
                     read -r -p "Please enter in megabytes, 3500 = 3.5 gigabytes, the max RAM you want to allow for IBD (the higher the better): `echo $'\n> '`" USERGIVENMAXRAM
                     echo "bdcache="$USERGIVENMAXRAM"" >> "$USERGIVENBITCOINDATADIR"/bitcoin.conf 
-                    echo "--------------------------------------------------------------------------------------------------------------------"
+                    writeBitcoinConfFileDependingOnUserGivenDataDir        
+                    writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
+                    gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt
+                    echo "------------------------------------------------------------------------------------------------------------------"   
+                    echo "Success, bitcoind is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoind IBD database for fastest download"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    echo "------------------------------------------------------------------------------------------------------------------"
+                    askUserForBitcoinProgramToInstallOrRun
                 else             
                     # - Running bitcoin-qt because the IDB has already been completed based on USERGIVENPROGRAMRUNINSTALL
                     writeBitcoinConfFileDependingOnUserGivenDataDir
                     writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
                     gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -- bitcoin-qt  
-                    echo "------------------------------------------------------------------------------------------------------------------"   
-                    echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network. Optimising bitcoin-qt IBD database for fastest download"
-                    echo "------------------------------------------------------------------------------------------------------------------"
-                    break
+                    echo "-----------------------------------------------------------------------------------------"   
+                    echo "Success, bitcoin-qt is running on the "$USERGIVENNETWORKCHOICE" network."
+                    echo "-----------------------------------------------------------------------------------------"
+                    askUserForBitcoinProgramToInstallOrRun
                 fi
                 ;;
             Exit )
@@ -615,8 +585,9 @@ writeBitcoinConfFileDependingOnUserGivenDataDir () {
   echo "zmqpubrawtx=tcp://127.0.0.1:28333" >> ~/.bitcoin/bitcoin.conf
   echo "export PATH=$PATH:~/bitcoin-source/bitcoin/scr" >> ~/.bashrc      
   }
-  writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir () {
-  # - Check to see if user has a defined data directory or is using default
+# - Check to see if user has a defined data directory or is using default
+writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir () {
+  
       if  [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ] && [ "$USERGIVENBITCOINDATADIR" == "default" ]
       then 
           echo "mainnet=1" >> ~/.bitcoin/bitcoin.conf
@@ -683,44 +654,603 @@ bitcoinInstallFunction() {
   installBitcoinCoreQtDependencies
   installGit 
   makeBitcoinDir 
-  createFolderAndCloneBitcoinRepo
   verifyAndInstallBerkley 
   installBitcoinCore 
   writeBitcoinConfFileDependingOnUserGivenDataDir
   writeBitcoinDataDirectoryConfFileDependingOnUserGivenDataDir
+  startRunningBitcoinCoreOptions
+  }
+# - Function for not yet programed 
+notYetWorking () {
+  echo ""  
+  echo "This part hasn't been added to the script yet, reseting your choice"
+  echo ""
   askUserForBitcoinProgramToInstallOrRun
   }
+# - Installs LND and all preliminaries   
+installLnd () {
+  read -r -p "You have choosen to install LND, is this correct? Enter Yes or No: `echo $'\n> '`" USERGIVENINSTALLLNDCORRECT
+    case $USERGIVENINSTALLLNDCORRECT in
+      [yY][eE][sS]|[yY] ) 
+        echo "----------------------------------------------------------"
+        echo "LND - Step 1: Installing Lightning (LND) and preliminaries"
+        echo "----------------------------------------------------------"
+        # - Install Go version 1.11 and verify the repo hasnn't been modified
+        sudo add-apt-repository ppa:longsleep/golang-backports -y
+        sudo apt-get update -y
+        sudo apt-get -y upgrade
+        # - Download and install Go version 1.11 and verify the repo hasnn't been modified
+        wget https://dl.google.com/go/go1.11.4.linux-amd64.tar.gz
+        GODOWNLOADSAFE=$(sha256sum go1.11.4.linux-amd64.tar.gz | awk -F " " '{ print $1 }')
+        sleep 1
+          if [ "$GODOWNLOADSAFE" == 'fb26c30e6a04ad937bbc657a1b5bba92f80096af1e8ee6da6430c045a8db3a5b' ] 
+          then 
+              sudo tar -C /usr/local -xzf go1.11.4.linux-amd64.tar.gz
+              export PATH=$PATH:/usr/local/go/bin
+          else
+              echo "The Go repo has been modified and this install as stopped for your saftey"
+              sleep 1
+              exit
+          fi
+        # - GOPATH environment variable set with edit in .bashrc file; represents the path to your workspace
+        export GOPATH=~/gocode 
+        export PATH=$PATH:$GOPATH/bin
+        # - Install LND UPDATED for the newest version
+        go get -d github.com/lightningnetwork/lnd
+        cd $GOPATH/src/github.com/lightningnetwork/lnd
+        make && make install
+        cd $GOPATH/src/github.com/lightningnetwork/lnd
+        git pull
+        make clean && make install                     
+        writeLndConfFile
+        echo "-------------------------"
+        echo "LND - Step 2: Testing LND"
+        echo "-------------------------"
+        testLnd
+        ;;    
+    [nN][oO]|[nN] ) 
+        askUserForBitcoinProgramToInstallOrRun
+        ;;
+    * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------" 
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;   
+    esac
+  }          
 
-notYetWorking () {
-echo ""  
-echo "This part hasn't been added to the script yet, reseting your choice"
-echo ""
-askUserForBitcoinProgramToInstallOrRun
-}
+# - Tests the LND installation   
+testLnd () {
+  read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+    [yY][eE][sS]|[yY] )
+      echo "---------------------------------------------------------------"
+      echo "Testing your LND installation, this will take about 20 minutes "
+      echo "---------------------------------------------------------------"
+      cd $GOPATH/src/github.com/lightningnetwork/lnd
+      make check
+      askUserForBitcoinProgramToInstallOrRun
+      ;;
+    [nN][oO]|[nN] ) 
+      askUserForBitcoinProgramToInstallOrRun
+      ;;
+    * ) echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        ;; 
+    esac
+    }
+# - Run LND     
+runLnd () {
+  read -r -p "Confirm you want to $USERGIVENPROGRAMRUNINSTALL on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+    [yY][eE][sS]|[yY] )
+        writeLndConfFile
+        source ~/.bashrc
+        askUserForNetwork
+        gnome-terminal --title LND_"$USERGIVENNETWORKCHOICE" --tab -- lnd
+        askUserForBitcoinProgramToInstallOrRun 
+        ;;
+    [nN][oO]|[nN] ) 
+        askUserForBitcoinProgramToInstallOrRun
+        ;;
+    * ) echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------" 
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;   
+    esac
+  } 
+
+
+
+lndCommandlineInterfaceMainMenu () {
+    echo "------------------------------------------------------------------------------------"
+    echo "LND / CLI - Choose the LND CLI command you want to run on Bitcoin's "$USERGIVENNETWORKCHOICE" network:"
+    echo "------------------------------------------------------------------------------------"
+      select USERGIVENPROGRAMRUNINSTALL in "Startup" "Wallet" "Peers" "Payments" "On-chain" "Channels" "Exit Back to Main Menu"
+      do
+            case $USERGIVENPROGRAMRUNINSTALL in
+            "Startup" )
+            echo "---------------------------"
+            echo "LND / CLI - Startup options"
+            echo "---------------------------"
+              select STARTUPMENU in "Create" "Unlock" "Change Password" "Exit Back to LND Main Menu" 
+              do
+                  case $STARTUPMENU in
+                  "Create" )
+                    createNewLNDWalet
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Unlock" )
+                    unlockLNDWalet
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Change Password" )
+                    changePassword
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Exit Back to LND Main Menu" )
+                    lndCommandlineInterfaceMainMenu  
+                    ;;
+                   "*" ) 
+                    echo ""
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    echo "Invalid choice, please choose from the list above"
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    ;;        
+                  esac
+                  done
+                  ;;           
+            "Wallet" )
+            echo "---------------------------"
+            echo "LND / CLI - Wallet options"
+            echo "---------------------------"
+              select WALLETMENU in "New Address" "Wallet Balance" "Sign Message" "Verify Message" "Exit Back to LND Main Menu"
+              do
+                  case $WALLETMENU in
+                  "New Address" )
+                    newAddress                     
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Wallet Balance" )
+                    walletBallance
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Sign Message" )
+                    echo "Current not programmed yet"
+                    sleep 1.5
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Verify Message" )
+                    echo "Currently not programmed yet"
+                    sleep1.5
+                    ;; 
+                  "Exit Back to LND Main Menu" )
+                    lndCommandlineInterfaceMainMenu  
+                    ;; 
+                   "*" ) 
+                    echo ""
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    echo "Invalid choice, please choose from the list above"
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    ;;        
+                  esac
+                  done
+                  ;;           
+            "Peers" )
+              echo "------------------------"
+              echo "LND / CLI - Peer options"
+              echo "------------------------"
+              select PEERSMENU in "Connect" "Disconnect" "List Peers" "Describe Network" "Get Node Information" "Exit Back to LND Main Menu"
+              do
+                  case $PEERSMENU in
+                  "Connect" )
+                    checkLNDNetwork
+                    connectPeer
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Disconnect" )
+                    checkLNDNetwork
+                    disconnectFromPeer
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "List Peers" )
+                    checkLNDNetwork
+                    listPeers
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Get Node Information" )
+                    checkLNDNetwork
+                    getNodeInfo
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Describe Network" )
+                    checkLNDNetwork
+                    describeGraph
+                    lndCommandlineInterfaceMainMenu  
+                    ;; 
+                  "Exit Back to LND Main Menu" )
+                    lndCommandlineInterfaceMainMenu  
+                    ;; 
+                   "*" ) 
+                    echo ""
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    echo "Invalid choice, please choose from the list above"
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    ;;        
+                  esac
+                  done
+                  ;;           
+            "Payments" )
+              echo "---------------------------"
+              echo "LND / CLI - Payment options"
+              echo "---------------------------"
+                select STARTUPMENU in "Create" "Unlock" "Change Password" "Exit Back to LND Main Menu" 
+                do
+                  case $STARTUPMENU in
+                  "Create" )
+                    checkLNDNetwork
+                    createNewLNDWalet
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Unlock" )
+                    checkLNDNetwork
+                    unlockLNDWalet
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                  "Change Password" )
+                    checkLNDNetwork
+                    changePassword
+                    lndCommandlineInterfaceMainMenu
+                    ;;
+                   "*" ) 
+                    echo ""
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                    echo "Invalid choice, please choose from the list above"
+                    echo "-------------------------------------------------"
+                    echo "-------------------------------------------------"
+                  ;;        
+                  esac
+                  done
+                  ;;
+            "Exit Back to Main Menu" )
+              askUserForBitcoinProgramToInstallOrRun
+              ;;    
+            "*" ) 
+                echo ""
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+                echo "Invalid choice, please choose from the list above"
+                echo "-------------------------------------------------"
+                echo "-------------------------------------------------"
+              ;;        
+          esac
+          done
+          }
+checkLNDNetwork () {
+  if [ "$USERGIVENNETWORKCHOICE" == "Mainnet" ]
+  then 
+    LNCLINETWORK=mainnet
+  else 
+    LNCLINETWORK=testnet
+  fi
+  }
+createNewLNDWalet () {
+  checkLNDNetwork
+  echo "Initialize a wallet when starting lnd for the first time"
+  read -r -p "Confirm you want to Create a New LND wallet while on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        lncli --network="$LNCLINETWORK" create
+        
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+    esac
+    }
+
+
+unlockLNDWalet () {
+  checkLNDNetwork
+  echo "Unlock an encrypted wallet at startup"
+  read -r -p "Confirm you want to Unlock your LND wallet while on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        lncli --network="$LNCLINETWORK" unlock
+        lndCommandlineInterfaceMainMenu
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+  esac
+  }
+
+changePassword () {
+  checkLNDNetwork
+  echo "Change an encrypted wallet's password at startup"
+  read -r -p "Confirm you want to change your password to your LND wallet on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        lncli --network="$LNCLINETWORK" changepassword
+        lndCommandlineInterfaceMainMenu
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+  esac
+  }
+newAddress () {
+  checkLNDNetwork
+  echo "Generates a new address"
+  read -r -p "Confirm you want to create a new LND wallet address while on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        lncli --network="$LNCLINETWORK" newaddress p2wkh
+        lndCommandlineInterfaceMainMenu
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+  esac
+  }
+walletBallance () {
+  checkLNDNetwork
+  echo "Compute and display the wallet's current balance"
+  read -r -p "Confirm you want to Display Your Wallets Balance while on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        lncli --network="$LNCLINETWORK" walletbalance
+        lndCommandlineInterfaceMainMenu
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+  esac
+  }
+connectPeer () {
+      checkLNDNetwork
+      echo "Connect to a remote lnd peer"
+      read -r -p "Paste the URI of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERCONNECT
+      echo PUBKEYPEERCONNECT
+      lncli --network="$LNCLINETWORK" connect "$PUBKEYPEERCONNECT"
+      lndCommandlineInterfaceMainMenu
+      #02a68237add204623021d09b0334c4992c132eb3c9dcfcb8f3cf8a57386775538e@18.205.95.237:9735
+      lndCommandlineInterfaceMainMenu
+      } 
+disconnectFromPeer () {
+  checkLNDNetwork
+  echo "Disconnect a remote lnd peer identified by public key"
+  read -r -p "Confirm you want to Disconnect a Peer while on Bitcoin's "$USERGIVENNETWORKCHOICE" network: Yes or No: `echo $'\n> '`" USERGIVENPROGRAMRUNINSTALLANSWER
+  case $USERGIVENPROGRAMRUNINSTALLANSWER in
+      [yY][eE][sS]|[yY] )
+        read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+        lncli --network="$LNCLINETWORK" disconnect "$PUBKEYPEERDISCONNECT"
+        lndCommandlineInterfaceMainMenu
+      ;;
+      [nN][oO]|[nN] ) 
+        echo ""
+        lndCommandlineInterfaceMainMenu
+      ;;
+      * ) 
+        echo ""
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo "Invalid choice, please enter Yes or No"
+        echo "--------------------------------------"
+        echo "--------------------------------------"
+        echo ""
+        ;;    
+  esac
+  } 
+listPeers () {
+  checkLNDNetwork
+  echo "List all active, currently connected peers"
+  lncli --network="$LNCLINETWORK" listpeers
+  sleep .5
+  }   
+describeGraph () {
+  checkLNDNetwork
+  echo "Describe the network graph"
+  lncli --network="$LNCLINETWORK" describegraph
+  sleep .5
+  }    
+getNodeInfo () {
+  checkLNDNetwork
+  echo "Returns basic information related to the active daemon"
+  lncli --network="$LNCLINETWORK" getinfo
+  sleep .5
+  }
+openChannel () {
+  checkLNDNetwork
+  echo "Open a channel to a node or an existing peer"
+  read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+  lncli --network="$LNCLINETWORK" openchannel "$PUBKEYPEERDISCONNECT"
+  lndCommandlineInterfaceMainMenu
+  }  
+closeChannel () {
+  echo "Not yet programmed"
+  lndCommandlineInterfaceMainMenu
+  }
+closeAllChannels () {
+  checkLNDNetwork
+  echo "Close all existing channels"
+  lncli --network="$LNCLINETWORK" closeallchannels  
+  lndCommandlineInterfaceMainMenu
+  }
+abandonChannel () {
+  echo "Not yet programmed"
+  lndCommandlineInterfaceMainMenu
+  }
+listChannels () {
+  checkLNDNetwork
+  echo "List all open channels"
+  lncli --network="$LNCLINETWORK" listchannels
+  lndCommandlineInterfaceMainMenu
+  }
+closedChannels () {
+  checkLNDNetwork
+  echo "List all closed channels"
+  lncli --network="$LNCLINETWORK" closedchannels 
+  lndCommandlineInterfaceMainMenu
+  }
+getChanInfo () {
+  checkLNDNetwork
+  echo "Get the state of a channel"
+  read -r -p "Paste the Channel ID of the channel you want info from: `echo $'\n> '`" GETCHANINFOID
+  lncli --network="$LNCLINETWORK" getchaninfo "$GETCHANINFOID"
+  lndCommandlineInterfaceMainMenu
+getNetworkInfo () {
+  checkLNDNetwork
+  echo "Get statistical information about the current state of the network"
+  lncli --network="$LNCLINETWORK" getnetworkinfo
+  lndCommandlineInterfaceMainMenu
+  }
+feeReport () {
+  checkLNDNetwork
+  echo "Display the current fee policies of all active channels"
+  lncli --network="$LNCLINETWORK" feereport
+  lndCommandlineInterfaceMainMenu
+  }
+updateChanPolicy () {
+  echo "This hasn't been programmand in yet"
+  lndCommandlineInterfaceMainMenu
+  }
+sendMany () {
+  echo "This hasn't been programmand in yet"
+  lndCommandlineInterfaceMainMenu
+  }
+sendCoins () {
+  checkLNDNetwork
+  echo "Send bitcoin on-chain to an address"
+  sleep .25
+  read -r -p "Paste the address of the wallet you want to send, on chain, coins to: `echo $'\n> '`" SENDCOINSADDRESS
+  read -r -p "Paste the address of the wallet you want to send, on chain, coins to: `echo $'\n> '`" SENDCOINSAMOUNT
+  lncli --network="$LNCLINETWORK" sendcoins "$SENDCOINSADDRESS" "$SENDCOINSAMOUNT"
+  sleep .25
+  lndCommandlineInterfaceMainMenu
+  }
+listUnspent () {
+  checkLNDNetwork
+  echo "Open a channel to a node or an existing peer"
+  #read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+  lncli --network="$LNCLINETWORK" listunspent
+  lndCommandlineInterfaceMainMenu
+  }
+listChainTxns () {
+  checkLNDNetwork
+  echo "List transactions from the wallet"
+  #read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+  lncli --network="$LNCLINETWORK" listchaintxns 
+  lndCommandlineInterfaceMainMenu
+  }
+
+
+
+
+
+
+
+
+
+sendPayment () {
+  checkLNDNetwork
+  echo "Open a channel to a node or an existing peer"
+  read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+  lncli --network="$LNCLINETWORK" sendpayment "$PUBKEYPEERDISCONNECT"
+  lndCommandlineInterfaceMainMenu
+  }
+
+
+
+
+
+
+listChannels () {
+  checkLNDNetwork
+  echo "Open a channel to a node or an existing peer"
+  read -r -p "Paste the Public Key of the peer you want to disconnect with: `echo $'\n> '`" PUBKEYPEERDISCONNECT
+  lncli --network="$LNCLINETWORK" disconnect "$PUBKEYPEERDISCONNECT"
+  lndCommandlineInterfaceMainMenu
+  }
+
+
 echo "-----------------------------------------------------"
-echo "Starting Bitcoin Core automated installer Beta 0.1.0"
+echo "Starting Bitcoin Core automated installer Beta 0.1.5"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + Z *********"
 echo ""
 sudo sleep 1.5   
 askUserForNetwork
 askUserForBitcoinDataDir
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
-askUserForBitcoinProgramToInstallOrRun
+askUerForBitcoinProgramToInstallOrRun
+
+
 
 
 
