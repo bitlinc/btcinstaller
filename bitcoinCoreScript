@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# - Create alias for the script
+createScriptFolder () {
+sudo apt-get -y install git
+sleep .15
+mkdir ~/.bitlincScript && cd ~/.bitlincScript
+git clone https://github.com/bitlinc/btcinstaller.git
+cd ~/.bitlincScript && cd btcinstaller
+chmod a+x functions
+}
+
+updateScriptWithGitHub () {
+    cd $HOME
+    cd $Desktop
+    cd ~/.bitlincScript
+    git clone https://github.com/bitlinc/btcinstaller.git
+    }
+
+createAlias () {
+USERNAME=$(whoami)    
+echo "alias btcinstaller='/home/"$USERNAME"/.bitlincScript/btcinstaller/functions'" >> ~/.bashrc 
+}
+
+reloadBash () {
+source ~/.bashrc 
+}
+
+createFirstApplication () {
+cd ~/.bitlincScript && cd btcinstaller
+git clone https://github.com/bitlinc/btcinstaller.git
+USERNAME=$(whoami) 
+cd $HOME && cd Desktop
+sudo echo "[Desktop Entry]" >> Start.desktop
+echo "Encoding=UTF-8" >> Start.desktop
+echo "Name=Run BTC Installer" >> Start.desktop
+#echo "Exec=gnome-terminal  --tab -- /home/"$USERNAME"/.bitlincScript/btcinstaller/updateScript" >> Start.desktop
+echo "Exec=gnome-terminal  --tab -- /home/"$USERNAME"/.bitlincScript/btcinstaller/functions" >> Start.desktop
+echo "Icon=utilities-terminal" >> Start.desktop
+#echo "Terminal=false" >> Start.desktop
+echo "Type=Application" >> Start.desktop
+echo "Name[en_US]=Bitcoin Installer" >> Start.desktop
+chmod a+x Start.desktop
+}
+
+createScriptFolder
+createAlias
+reloadBash
+createFirstApplication
+
+
+#gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -e 'sh -c bitcoind'
+#echo "Exec=sh -c cd $HOME; cd Desktop; git clone bitlinc/btcinstaller.git" >> Start.desktop
