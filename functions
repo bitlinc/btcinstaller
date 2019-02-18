@@ -1605,7 +1605,7 @@ commandsHelpLND () {
   }  
 
 echo "-----------------------------------------------------"
-echo "Starting Bitcoin Core automated installer Beta 0.1.8.0"
+echo "Starting Bitcoin Core automated installer Beta 0.1.8.1"
 echo "-----------------------------------------------------"
 echo "******** To exit installer type control + C *********"
 echo ""
