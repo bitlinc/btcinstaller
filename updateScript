@@ -1,0 +1,14 @@
+
+#!/usr/bin/env bash
+
+
+updateScriptWithGitHub () {
+    cd $HOME
+    rm -rf ~/.bitlincScript
+    mkdir ~/.bitlincScript && cd ~/.bitlincScript
+    git clone https://github.com/bitlinc/btcinstaller.git
+    cd ~/.bitlincScript && cd btcinstaller
+    chmod a+x functions
+    }
+updateScriptWithGitHub
+
