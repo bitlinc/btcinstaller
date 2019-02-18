@@ -9,4 +9,12 @@ updateScriptWithGitHub () {
     cd ~/.bitlincScript && cd btcinstaller
     }
 updateScriptWithGitHub
+cd ~/.bitlincScript && cd btcinstaller
+chmod a+x functions
+chmod a+x bitcoinCoreScript
+chmod a+x updateScript 
+
+
+
+
 
