@@ -7,16 +7,10 @@ updateScriptWithGitHub () {
     cd ~/.bitlincScript && cd btcinstaller
     git clone git@github.com/bitlinc/btcinstaller.git
     }
-startScript () {
-	cd ~/.bitlincScript && cd btcinstaller
-	sleep .5
-	cd ~/.bitlincScript && cd btcinstaller
-	./functions
-	}
 updateScriptWithGitHub
 chmod a+x functions
 chmod a+x bitcoinCoreScript
 chmod a+x updateScript
-startScript
+
 
 
