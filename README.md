@@ -1,2 +1,2 @@
-# btcinstaller
-Full Bitcoin core installer 
+# btcinstaller Logic files
+Full Bitcoin core and Lighting LND installer 
