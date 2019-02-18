@@ -1,1 +1,7 @@
 
+updateScriptWithGitHub () {
+    cd $HOME
+    cd $Desktop
+    cd ~/.bitlincScript
+    git clone https://github.com/bitlinc/btcinstaller.git
+    }
