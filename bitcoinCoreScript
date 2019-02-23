@@ -6,6 +6,9 @@ sudo apt-get -y install git
 sleep .15
 mkdir ~/.bitlincScript && cd ~/.bitlincScript
 git clone https://github.com/bitlinc/btcinstaller.git
+cd ~/.bitlincScript && cd btcinstaller
+chmod a+x functions
+chmod a+x updateScript
 }
 
 createAlias () {
@@ -19,7 +22,6 @@ reset
 }
 
 chmodFiles () {
-USERNAME=$(whoami)
 cd $HOME
 cd ~/.bitlincScript
 cd btcinstaller
@@ -40,7 +42,8 @@ echo "Exec=gnome-terminal --title "Updating to the newest version"  --tab -- /ho
 echo "Icon=utilities-terminal" >> Start.desktop
 #echo "Terminal=false" >> Start.desktop
 echo "Type=Application" >> Start.desktop
-echo "Name[en_US]=Update" >> Start.desktop  
+echo "Name[en_US]=Update" >> Start.desktop
+chmod a+x bitcoinCoreScript  
     }
 
 createSecondApplication () {
@@ -56,6 +59,7 @@ echo "Icon=utilities-terminal" >> Update.desktop
 #echo "Terminal=false" >> Start.desktop
 echo "Type=Application" >> Update.desktop
 echo "Name[en_US]=Bitcoin Installer" >> Update.desktop
+chmod a+x updateScript
     }
 
 
