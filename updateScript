@@ -1,16 +1,35 @@
 #!/usr/bin/env bash
 
 
+removeDirectory () {
+    cd $HOME
+    cd ~/.bitlincScript
+    sudo rm -rf btcinstaller
+    }
 updateScriptWithGitHub () {
     cd $HOME
-    rm -rf ~/.bitlincScript/btcinstaller
-    cd ~/.bitlincScript && cd btcinstaller
-    git clone git@github.com/bitlinc/btcinstaller.git
+    cd ~/.bitlincScript
+    git clone https://github.com/bitlinc/btcinstaller.git
+    cd ~$HOME
+    cd ~/.bitlincScript
+    cd btcinstaller
+    chmod a+x functions
+    chmod a+x updateScript
     }
+reloadBash () {
+source ~/.bashrc 
+reset
+}
+echo "Step 1"
+sleep 2    
+removeDirectory 
+echo "step 2"
+sleep 2
+reloadBash
+echo "step 3"
+sleep 2   
 updateScriptWithGitHub
-chmod a+x functions
-chmod a+x bitcoinCoreScript
-chmod a+x updateScript
-
+echo "step 4"
+echo "Update complete, thank you for downloading the newest version"
 
 
