@@ -10,7 +10,6 @@ updateScriptWithGitHub () {
     cd $HOME
     cd ~/.bitlincScript
     git clone https://github.com/bitlinc/btcinstaller.git
-    cd ~$HOME
     cd ~/.bitlincScript
     cd btcinstaller
     chmod a+x functions
@@ -20,16 +19,18 @@ reloadBash () {
 source ~/.bashrc 
 reset
 }
-echo "Step 1"
-sleep 2    
+echo "Step 1"   
 removeDirectory 
+sleep 2 
+echo "checking version with GitHub"
 echo "step 2"
-sleep 2
 reloadBash
+sleep 2
+echo "reloading Bash"
 echo "step 3"
 sleep 2   
 updateScriptWithGitHub
-echo "step 4"
+echo "updating script"
+echo "step 5"
+sleep 2
 echo "Update complete, thank you for downloading the newest version"
-
-
