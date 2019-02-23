@@ -31,9 +31,6 @@ chmod a+x bitcoinCoreScript
 }
 
 createFirstApplication () {
-cd ~/.bitlincScript && cd btcinstaller
-git clone https://github.com/bitlinc/btcinstaller.git
-USERNAME=$(whoami) 
 cd $HOME && cd Desktop
 sudo echo "[Desktop Entry]" >> Start.desktop
 echo "Encoding=UTF-8" >> Start.desktop
@@ -47,9 +44,6 @@ chmod a+x bitcoinCoreScript
     }
 
 createSecondApplication () {
-cd ~/.bitlincScript && cd btcinstaller
-git clone https://github.com/bitlinc/btcinstaller.git
-USERNAME=$(whoami) 
 cd $HOME && cd Desktop
 sudo echo "[Desktop Entry]" >> Update.desktop
 echo "Encoding=UTF-8" >> Update.desktop
