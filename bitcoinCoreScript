@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# - Create alias for the script
 createScriptFolder () {
 sudo apt-get -y install git
 sleep .15
@@ -40,7 +39,7 @@ echo "Icon=utilities-terminal" >> Start.desktop
 #echo "Terminal=false" >> Start.desktop
 echo "Type=Application" >> Start.desktop
 echo "Name[en_US]=Update" >> Start.desktop
-chmod a+x bitcoinCoreScript  
+chmod a+x Start.desktop
     }
 
 createSecondApplication () {
@@ -53,7 +52,7 @@ echo "Icon=utilities-terminal" >> Update.desktop
 #echo "Terminal=false" >> Start.desktop
 echo "Type=Application" >> Update.desktop
 echo "Name[en_US]=Bitcoin Installer" >> Update.desktop
-chmod a+x updateScript
+chmod a+x Update.desktop
     }
 
 
@@ -66,7 +65,7 @@ createSecondApplication
 cd $Desktop
 cd Desktop
 rm -rf bitcoinCoreScript
-chmodFiles
+#chmodFiles
 
 
 #gnome-terminal --title Bitcoind_"$USERGIVENNETWORKCHOICE" --tab -e 'sh -c bitcoind'
