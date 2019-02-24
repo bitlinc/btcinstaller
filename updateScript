@@ -34,3 +34,6 @@ echo "updating script"
 echo "step 5"
 sleep 2
 echo "Update complete, thank you for downloading the newest version"
+sleep 2 
+echo "Starting Bitcoin Installer"
+gnome-terminal --title "Bitcoin Installer: To Exit type control + C"  --tab -- /home/linux/.bitlincScript/btcinstaller/functions
